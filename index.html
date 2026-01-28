@@ -1,14 +1,151 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+  <title>문서 템플릿 생성기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Gothic+A1:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark">문서</span>
+      <div>
+        <h1>간단하고 가독성 있는 문서 템플릿</h1>
+        <p>자기소개 / 사유서 / 반성문 / 결석 사유서 / 동아리 지원서</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="resetAll" class="ghost">전체 초기화</button>
+      <button id="copyResult" class="primary">결과 복사</button>
+      <button id="submitForm" class="secondary">폼 제출</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel input-panel">
+      <h2>입력</h2>
+      <div class="field">
+        <label for="templateType">문서 종류</label>
+        <select id="templateType">
+          <option value="intro">자기소개</option>
+          <option value="reason">사유서</option>
+          <option value="reflection">반성문</option>
+          <option value="absence">결석 사유서</option>
+          <option value="club">동아리 지원서</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="name">이름</label>
+          <input id="name" type="text" placeholder="홍길동" />
+        </div>
+        <div class="field">
+          <label for="date">작성일</label>
+          <input id="date" type="date" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="recipient">수신 / 대상</label>
+          <input id="recipient" type="text" placeholder="담임 선생님, 동아리장" />
+        </div>
+        <div class="field">
+          <label for="title">제목</label>
+          <input id="title" type="text" placeholder="사유서" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="background">소속 / 배경</label>
+          <input id="background" type="text" placeholder="00고 2학년 3반" />
+        </div>
+        <div class="field">
+          <label for="event">사건 / 목적</label>
+          <input id="event" type="text" placeholder="지각, 과제 미제출" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="absenceDate">결석일</label>
+          <input id="absenceDate" type="date" />
+        </div>
+        <div class="field">
+          <label for="club">지원 동아리</label>
+          <input id="club" type="text" placeholder="디자인 동아리" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="reason">주요 사유 / 동기</label>
+        <textarea id="reason" rows="3" placeholder="간단 명료하게 핵심 사유를 적어주세요."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="details">세부 내용</label>
+        <textarea id="details" rows="4" placeholder="상황 설명, 배운 점, 보완 계획 등을 적어주세요."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="plan">개선 / 활동 계획</label>
+        <textarea id="plan" rows="3" placeholder="앞으로의 계획을 적어주세요."></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="strengths">강점 / 역량</label>
+          <input id="strengths" type="text" placeholder="성실함, 커뮤니케이션" />
+        </div>
+        <div class="field">
+          <label for="experience">경험 / 성과</label>
+          <input id="experience" type="text" placeholder="프로젝트 참여, 수상" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="goal">목표</label>
+          <input id="goal" type="text" placeholder="책임감 있게 성장" />
+        </div>
+        <div class="field">
+          <label for="contact">연락처</label>
+          <input id="contact" type="text" placeholder="010-0000-0000" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>자동 문장 추천</label>
+        <div id="suggestions" class="suggestions"></div>
+        <p class="hint">추천 문장을 클릭하면 세부 내용에 추가됩니다.</p>
+      </div>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="output-header">
+        <h2>결과</h2>
+        <div class="output-actions">
+          <button id="applyTemplate" class="secondary">문장 생성</button>
+          <button id="downloadTxt" class="ghost">TXT 저장</button>
+          <button id="downloadPdf" class="ghost">PDF 저장</button>
+        </div>
+      </div>
+      <div class="paper" id="result">
+        <p class="placeholder">입력 후 문장 생성을 눌러주세요.</p>
+      </div>
+      <p id="submitStatus" class="status"></p>
+    </section>
+  </main>
+
+  <script defer src="/main.js"></script>
 </body>
 </html>
