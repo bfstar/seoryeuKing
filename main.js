@@ -68,6 +68,11 @@ const formatKoreanDate = (value) => {
   return `${y}년 ${m}월 ${d}일`;
 };
 
+const formatDateForFilename = (value) => {
+  if (!value) return "";
+  return value.replace(/-/g, "");
+};
+
 const getValue = (field) => field.value.trim();
 
 const buildIntro = () => {
@@ -254,9 +259,12 @@ const downloadPdf = () => {
   const text = result.textContent.trim();
   if (!text) return;
   const content = text.replace(/\n/g, "<br>");
+  const title = templateTitles[fields.templateType.value];
+  const datePart = formatDateForFilename(fields.date.value) || formatDateForFilename(new Date().toISOString().slice(0, 10));
+  const docTitle = datePart ? `${title}_${datePart}` : title;
   const win = window.open("", "_blank", "width=900,height=700");
   if (!win) return;
-  win.document.write(`\n    <!doctype html>\n    <html lang=\"ko\">\n      <head>\n        <meta charset=\"UTF-8\" />\n        <title>문서 PDF</title>\n        <style>\n          body { font-family: \"Nanum Myeongjo\", serif; padding: 40px; line-height: 1.7; }\n          h1 { font-size: 20px; margin-bottom: 24px; }\n        </style>\n      </head>\n      <body>${content}</body>\n    </html>\n  `);
+  win.document.write(`\n    <!doctype html>\n    <html lang=\"ko\">\n      <head>\n        <meta charset=\"UTF-8\" />\n        <title>${docTitle}</title>\n        <style>\n          body { font-family: \"Nanum Myeongjo\", serif; padding: 40px; line-height: 1.7; }\n          h1 { font-size: 20px; margin-bottom: 24px; }\n        </style>\n      </head>\n      <body>${content}</body>\n    </html>\n  `);
   win.document.close();
   win.focus();
   win.print();
