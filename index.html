@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>문서 템플릿 생성기</title>
+  <meta name="description" content="자기소개, 사유서, 반성문, 결석 사유서, 동아리 지원서 템플릿을 빠르게 작성하고 예시와 가이드로 완성도를 높이세요." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Gothic+A1:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -21,6 +22,13 @@
         <p>자기소개 / 사유서 / 반성문 / 결석 사유서 / 동아리 지원서</p>
       </div>
     </div>
+    <nav class="top-nav">
+      <a href="/about.html">About</a>
+      <a href="/guide-intro.html">가이드</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
     <div class="header-actions">
       <button id="resetAll" class="ghost">전체 초기화</button>
       <button id="copyResult" class="primary">결과 복사</button>
@@ -145,6 +153,113 @@
       <p id="submitStatus" class="status"></p>
     </section>
   </main>
+
+  <section class="content-section">
+    <div class="section-header">
+      <h2>왜 이 템플릿인가요?</h2>
+      <p>문서의 핵심은 짧고 명료한 구조입니다. 필요한 정보만 정리하고, 읽는 사람이 빠르게 이해하도록 돕습니다.</p>
+    </div>
+    <div class="card-grid">
+      <article class="info-card">
+        <h3>한눈에 보이는 구조</h3>
+        <p>문서 제목, 핵심 사유, 세부 설명, 개선 계획을 분리해 읽기 쉽게 구성했습니다.</p>
+      </article>
+      <article class="info-card">
+        <h3>현실적인 문장 톤</h3>
+        <p>과장 없이 담담한 문장을 제안해 실제 제출용 문서에 자연스럽게 어울립니다.</p>
+      </article>
+      <article class="info-card">
+        <h3>정직한 사용 안내</h3>
+        <p>허위 정보 작성은 금지됩니다. 실제 상황을 바탕으로 사실에 맞게 작성하세요.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="section-header">
+      <h2>빠른 사용 방법</h2>
+      <p>필수 입력을 채우고 문장 생성을 누르면 초안이 완성됩니다.</p>
+    </div>
+    <ol class="steps">
+      <li>문서 종류 선택</li>
+      <li>이름, 대상, 날짜 등 기본 정보를 입력</li>
+      <li>사유/세부 내용/계획을 간단히 정리</li>
+      <li>추천 문장을 클릭해 보강</li>
+      <li>TXT 또는 PDF로 저장 후 제출</li>
+    </ol>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <h2>문서별 가이드</h2>
+      <p>각 문서의 핵심 구조와 작성 팁을 따로 정리했습니다.</p>
+    </div>
+    <div class="card-grid">
+      <article class="info-card">
+        <h3>자기소개서</h3>
+        <p>핵심 강점과 실제 경험을 연결하세요.</p>
+        <a class="card-link" href="/guide-intro.html">가이드 보기</a>
+      </article>
+      <article class="info-card">
+        <h3>사유서</h3>
+        <p>사실 → 사유 → 개선 계획 순서를 지키세요.</p>
+        <a class="card-link" href="/guide-reason.html">가이드 보기</a>
+      </article>
+      <article class="info-card">
+        <h3>반성문</h3>
+        <p>책임 인식과 재발 방지 약속을 담으세요.</p>
+        <a class="card-link" href="/guide-reflection.html">가이드 보기</a>
+      </article>
+      <article class="info-card">
+        <h3>결석 사유서</h3>
+        <p>결석 사유와 보완 계획을 명확히 작성하세요.</p>
+        <a class="card-link" href="/guide-absence.html">가이드 보기</a>
+      </article>
+      <article class="info-card">
+        <h3>동아리 지원서</h3>
+        <p>동기와 기여 계획을 구체적으로 설명하세요.</p>
+        <a class="card-link" href="/guide-club.html">가이드 보기</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="section-header">
+      <h2>자주 묻는 질문</h2>
+      <p>제출 전 많이 묻는 질문을 모았습니다.</p>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>문서가 너무 길어질까 걱정돼요.</summary>
+        <p>핵심 사유와 계획만 3~6문장으로 정리하면 충분합니다. 내용이 길어지면 세부 사항을 줄이고 요점을 강조하세요.</p>
+      </details>
+      <details>
+        <summary>문장을 그대로 복사해도 되나요?</summary>
+        <p>추천 문장은 참고용입니다. 자신의 상황에 맞게 수정하는 것이 가장 좋습니다.</p>
+      </details>
+      <details>
+        <summary>허위 작성도 가능한가요?</summary>
+        <p>불가합니다. 본 서비스는 사실에 기반한 문서 작성만 지원합니다.</p>
+      </details>
+      <details>
+        <summary>개인정보는 저장되나요?</summary>
+        <p>입력 내용은 브라우저에서 생성되며, 폼 제출 시에만 Formspree로 전송됩니다.</p>
+      </details>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div>
+      <strong>문서 템플릿 생성기</strong>
+      <p>정확하고 성실한 문서 작성 문화를 지향합니다.</p>
+    </div>
+    <div class="footer-links">
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
 
   <script defer src="/main.js"></script>
 </body>

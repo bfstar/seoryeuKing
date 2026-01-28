@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://seoryeuking.web.app/sitemap.xml
