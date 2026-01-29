@@ -31,8 +31,8 @@ body {
 .site-banner {
   position: relative;
   z-index: 1;
-  margin: 0 auto 20px;
-  max-width: 1000px;
+  margin: -12px auto 16px;
+  max-width: 600px;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 26px 60px rgba(10, 18, 40, 0.22);
