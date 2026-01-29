@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 
 const fields = {
   templateType: $("templateType"),
+  templateSearch: $("templateSearch"),
   name: $("name"),
   date: $("date"),
   recipient: $("recipient"),
@@ -22,6 +23,8 @@ const fields = {
 const result = $("result");
 const suggestionsBox = $("suggestions");
 const submitStatus = $("submitStatus");
+const templateList = $("templateList");
+const templateCount = $("templateCount");
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgokjrnr";
 
@@ -51,15 +54,120 @@ const sentenceBank = {
     "프로젝트 경험을 쌓으며 팀에 기여하고 싶습니다.",
     "정기적인 활동에 성실히 참여하겠습니다.",
   ],
+  default: [
+    "핵심 내용 위주로 간결하게 정리했습니다.",
+    "사실 관계를 기준으로 명확하게 작성했습니다.",
+    "필요한 정보만 담아 제출용 문서로 구성했습니다.",
+  ],
 };
 
-const templateTitles = {
-  intro: "자기소개서",
-  reason: "사유서",
-  reflection: "반성문",
-  absence: "결석 사유서",
-  club: "동아리 지원서",
-};
+const templateCatalog = [
+  { id: "intro", title: "자기소개서", tags: ["자기소개", "지원"] },
+  { id: "reason", title: "사유서", tags: ["사유", "보고"] },
+  { id: "reflection", title: "반성문", tags: ["반성", "사과"] },
+  { id: "absence", title: "결석 사유서", tags: ["결석", "학교"] },
+  { id: "club", title: "동아리 지원서", tags: ["동아리", "지원"] },
+  { id: "request", title: "요청서", tags: ["요청", "업무"] },
+  { id: "application", title: "신청서", tags: ["신청", "접수"] },
+  { id: "withdrawal", title: "철회서", tags: ["철회", "취소"] },
+  { id: "appeal", title: "이의신청서", tags: ["이의", "신청"] },
+  { id: "report", title: "보고서", tags: ["보고", "정리"] },
+  { id: "proposal", title: "제안서", tags: ["제안", "기획"] },
+  { id: "plan", title: "계획서", tags: ["계획", "정리"] },
+  { id: "agenda", title: "회의 안건서", tags: ["회의", "안건"] },
+  { id: "minutes", title: "회의록", tags: ["회의", "기록"] },
+  { id: "budget", title: "예산안", tags: ["예산", "계획"] },
+  { id: "expense", title: "지출결의서", tags: ["지출", "결의"] },
+  { id: "reimbursement", title: "비용 청구서", tags: ["비용", "청구"] },
+  { id: "invoice", title: "청구서", tags: ["청구", "결제"] },
+  { id: "receipt", title: "영수증 설명서", tags: ["영수증", "설명"] },
+  { id: "consent", title: "동의서", tags: ["동의", "확인"] },
+  { id: "pledge", title: "서약서", tags: ["서약", "약속"] },
+  { id: "agreement", title: "합의서", tags: ["합의", "협의"] },
+  { id: "contract", title: "계약서", tags: ["계약", "약정"] },
+  { id: "nda", title: "비밀유지 서약서", tags: ["보안", "비밀"] },
+  { id: "reference", title: "추천서", tags: ["추천", "검증"] },
+  { id: "attendance", title: "출석 확인서", tags: ["출석", "확인"] },
+  { id: "tardy", title: "지각 사유서", tags: ["지각", "사유"] },
+  { id: "leave", title: "조퇴 사유서", tags: ["조퇴", "사유"] },
+  { id: "sick", title: "병결 사유서", tags: ["병결", "사유"] },
+  { id: "makeup", title: "보충학습 계획서", tags: ["보충", "학습"] },
+  { id: "apology", title: "사과문", tags: ["사과", "반성"] },
+  { id: "incident", title: "경위서", tags: ["경위", "사건"] },
+  { id: "statement", title: "진술서", tags: ["진술", "사건"] },
+  { id: "complaint", title: "민원 접수서", tags: ["민원", "접수"] },
+  { id: "response", title: "답변서", tags: ["답변", "회신"] },
+  { id: "notice", title: "공지문", tags: ["공지", "안내"] },
+  { id: "invitation", title: "초대장", tags: ["초대", "행사"] },
+  { id: "certification", title: "확인서", tags: ["확인", "증명"] },
+  { id: "proof_enrollment", title: "재학 증명 요청서", tags: ["재학", "증명"] },
+  { id: "certificate_request", title: "증명서 발급 요청서", tags: ["증명", "발급"] },
+  { id: "scholarship", title: "장학금 신청서", tags: ["장학금", "신청"] },
+  { id: "internship", title: "인턴 지원서", tags: ["인턴", "지원"] },
+  { id: "volunteer", title: "봉사활동 신청서", tags: ["봉사", "신청"] },
+  { id: "leave_of_absence", title: "휴학 신청서", tags: ["휴학", "신청"] },
+  { id: "return_school", title: "복학 신청서", tags: ["복학", "신청"] },
+  { id: "transfer", title: "전학 신청서", tags: ["전학", "신청"] },
+  { id: "lab_request", title: "실습 신청서", tags: ["실습", "신청"] },
+  { id: "equipment_loan", title: "장비 대여 신청서", tags: ["장비", "대여"] },
+  { id: "room_booking", title: "공간 대관 신청서", tags: ["대관", "공간"] },
+  { id: "event_plan", title: "행사 기획서", tags: ["행사", "기획"] },
+  { id: "event_report", title: "행사 결과 보고서", tags: ["행사", "보고"] },
+  { id: "budget_request", title: "예산 신청서", tags: ["예산", "신청"] },
+  { id: "sponsorship", title: "후원 요청서", tags: ["후원", "요청"] },
+  { id: "donation", title: "기부금 요청서", tags: ["기부", "요청"] },
+  { id: "marketing", title: "홍보 요청서", tags: ["홍보", "요청"] },
+  { id: "partnership", title: "협력 제안서", tags: ["협력", "제안"] },
+  { id: "training_plan", title: "교육 계획서", tags: ["교육", "계획"] },
+  { id: "training_report", title: "교육 보고서", tags: ["교육", "보고"] },
+  { id: "evaluation", title: "평가서", tags: ["평가", "점검"] },
+  { id: "feedback", title: "피드백 제출서", tags: ["피드백", "제출"] },
+  { id: "survey", title: "설문 요청서", tags: ["설문", "요청"] },
+  { id: "resignation", title: "사직서", tags: ["사직", "인사"] },
+  { id: "appointment", title: "임명장", tags: ["임명", "인사"] },
+  { id: "job_offer", title: "채용 제안서", tags: ["채용", "제안"] },
+  { id: "performance", title: "성과 보고서", tags: ["성과", "보고"] },
+  { id: "kpi", title: "성과 목표서", tags: ["목표", "성과"] },
+  { id: "risk", title: "리스크 분석서", tags: ["리스크", "분석"] },
+  { id: "swot", title: "SWOT 분석서", tags: ["분석", "전략"] },
+  { id: "schedule", title: "일정표", tags: ["일정", "관리"] },
+  { id: "checklist", title: "체크리스트", tags: ["체크", "관리"] },
+  { id: "memo", title: "업무 메모", tags: ["메모", "업무"] },
+  { id: "handover", title: "인수인계서", tags: ["인수인계", "업무"] },
+  { id: "progress", title: "진행 상황 보고서", tags: ["진행", "보고"] },
+  { id: "issue", title: "이슈 보고서", tags: ["이슈", "보고"] },
+  { id: "bug", title: "버그 리포트", tags: ["버그", "리포트"] },
+  { id: "change", title: "변경 요청서", tags: ["변경", "요청"] },
+  { id: "release", title: "릴리스 노트", tags: ["릴리스", "배포"] },
+  { id: "policy", title: "정책 문서", tags: ["정책", "기준"] },
+  { id: "guideline", title: "가이드라인", tags: ["가이드", "기준"] },
+  { id: "faq", title: "FAQ 문서", tags: ["질문", "응답"] },
+  { id: "terms", title: "서비스 약관 초안", tags: ["약관", "서비스"] },
+  { id: "privacy", title: "개인정보 처리방침 초안", tags: ["개인정보", "정책"] },
+  { id: "cookie", title: "쿠키 정책", tags: ["쿠키", "정책"] },
+  { id: "incident_response", title: "사고 대응 보고서", tags: ["사고", "대응"] },
+  { id: "safety", title: "안전 점검표", tags: ["안전", "점검"] },
+  { id: "compliance", title: "컴플라이언스 체크리스트", tags: ["규정", "점검"] },
+  { id: "purchase", title: "구매 요청서", tags: ["구매", "요청"] },
+  { id: "vendor", title: "업체 선정서", tags: ["업체", "선정"] },
+  { id: "quotation", title: "견적 요청서", tags: ["견적", "요청"] },
+  { id: "delivery", title: "납품 확인서", tags: ["납품", "확인"] },
+  { id: "inventory", title: "재고 확인서", tags: ["재고", "확인"] },
+  { id: "maintenance", title: "유지보수 요청서", tags: ["유지보수", "요청"] },
+  { id: "repair", title: "수리 요청서", tags: ["수리", "요청"] },
+  { id: "travel", title: "출장 신청서", tags: ["출장", "신청"] },
+  { id: "travel_report", title: "출장 보고서", tags: ["출장", "보고"] },
+  { id: "leave_request", title: "휴가 신청서", tags: ["휴가", "신청"] },
+  { id: "overtime", title: "초과근무 신청서", tags: ["초과근무", "신청"] },
+  { id: "expense_report", title: "경비 정산서", tags: ["경비", "정산"] },
+  { id: "payment", title: "지급 요청서", tags: ["지급", "요청"] },
+  { id: "invoice_request", title: "세금계산서 발급 요청서", tags: ["세금계산서", "발급"] },
+];
+
+const templateTitles = templateCatalog.reduce((acc, item) => {
+  acc[item.id] = item.title;
+  return acc;
+}, {});
 
 const formatKoreanDate = (value) => {
   if (!value) return "";
@@ -193,6 +301,35 @@ const buildClub = () => {
   return lines.join("\n");
 };
 
+const buildGeneric = (type) => {
+  const title = templateTitles[type] || "문서";
+  const recipient = getValue(fields.recipient) || "담당자";
+  const name = getValue(fields.name) || "작성자";
+  const background = getValue(fields.background);
+  const event = getValue(fields.event);
+  const reason = getValue(fields.reason);
+  const details = getValue(fields.details);
+  const plan = getValue(fields.plan);
+  const date = formatKoreanDate(fields.date.value);
+
+  const lines = [
+    title,
+    "",
+    `수신: ${recipient}`,
+    date ? `작성일: ${date}` : null,
+    background ? `소속: ${background}` : null,
+    "",
+    event ? `주요 내용: ${event}` : "주요 내용:",
+    reason ? `사유/배경: ${reason}` : null,
+    details || null,
+    plan ? `후속 계획: ${plan}` : null,
+    "",
+    name,
+  ].filter(Boolean);
+
+  return lines.join("\n");
+};
+
 const builders = {
   intro: buildIntro,
   reason: buildReason,
@@ -203,7 +340,7 @@ const builders = {
 
 const renderSuggestions = () => {
   const key = fields.templateType.value;
-  const list = sentenceBank[key];
+  const list = sentenceBank[key] || sentenceBank.default;
   suggestionsBox.innerHTML = "";
   list.forEach((sentence) => {
     const btn = document.createElement("button");
@@ -220,8 +357,44 @@ const renderSuggestions = () => {
 
 const hasAnyInput = () => {
   return Object.entries(fields).some(([key, field]) => {
-    if (key === "templateType") return false;
+    if (key === "templateType" || key === "templateSearch") return false;
     return field.value.trim();
+  });
+};
+
+const renderTemplateOptions = (list) => {
+  fields.templateType.innerHTML = "";
+  list.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = item.title;
+    fields.templateType.appendChild(option);
+  });
+};
+
+const renderTemplateList = (list) => {
+  templateList.innerHTML = "";
+  list.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "template-chip";
+    btn.textContent = item.title;
+    btn.addEventListener("click", () => {
+      fields.templateType.value = item.id;
+      renderSuggestions();
+      renderResult();
+    });
+    templateList.appendChild(btn);
+  });
+  templateCount.textContent = String(list.length);
+};
+
+const filterTemplates = () => {
+  const query = fields.templateSearch.value.trim().toLowerCase();
+  if (!query) return templateCatalog;
+  return templateCatalog.filter((item) => {
+    const haystack = `${item.title} ${item.tags.join(" ")}`.toLowerCase();
+    return haystack.includes(query);
   });
 };
 
@@ -231,7 +404,7 @@ const renderResult = () => {
     return;
   }
   const type = fields.templateType.value;
-  const builder = builders[type];
+  const builder = builders[type] || (() => buildGeneric(type));
   const content = builder();
   result.textContent = content;
 };
@@ -331,6 +504,20 @@ fields.templateType.addEventListener("change", () => {
   renderResult();
 });
 
+fields.templateSearch.addEventListener("input", () => {
+  const filtered = filterTemplates();
+  const current = fields.templateType.value;
+  renderTemplateOptions(filtered);
+  renderTemplateList(filtered);
+  if (filtered.some((item) => item.id === current)) {
+    fields.templateType.value = current;
+  } else if (filtered.length > 0) {
+    fields.templateType.value = filtered[0].id;
+  }
+  renderSuggestions();
+  renderResult();
+});
+
 $("applyTemplate").addEventListener("click", renderResult);
 $("resetAll").addEventListener("click", resetAll);
 $("copyResult").addEventListener("click", copyResult);
@@ -339,6 +526,9 @@ $("downloadPdf").addEventListener("click", downloadPdf);
 $("submitForm").addEventListener("click", submitForm);
 
 initDates();
+renderTemplateOptions(templateCatalog);
+renderTemplateList(templateCatalog);
+fields.templateType.value = templateCatalog[0].id;
 renderSuggestions();
 renderResult();
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>문서 템플릿 생성기</title>
-  <meta name="description" content="자기소개, 사유서, 반성문, 결석 사유서, 동아리 지원서 템플릿을 빠르게 작성하고 예시와 가이드로 완성도를 높이세요." />
+  <title>서류킹</title>
+  <meta name="description" content="서류킹에서 100+ 문서 템플릿을 빠르게 검색하고, 가이드를 참고해 정확한 문서를 완성하세요." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Gothic+A1:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -14,12 +14,21 @@
   <div class="bg-orb orb-a"></div>
   <div class="bg-orb orb-b"></div>
 
+  <div class="site-banner">
+    <img src="/seoryuking_main.png" alt="서류킹 제목 배너" />
+  </div>
+
   <header class="site-header">
     <div class="brand">
-      <span class="brand-mark">문서</span>
-      <div>
+      <span class="brand-mark">서류킹</span>
+      <div class="brand-copy">
         <h1>간단하고 가독성 있는 문서 템플릿</h1>
-        <p>자기소개 / 사유서 / 반성문 / 결석 사유서 / 동아리 지원서</p>
+        <p>서류킹에서 100개 이상의 템플릿을 빠르게 찾고 정확하게 작성하세요.</p>
+        <div class="hero-badges">
+          <span class="badge">무료 템플릿</span>
+          <span class="badge">브라우저 즉시 생성</span>
+          <span class="badge">PDF · TXT 저장</span>
+        </div>
       </div>
     </div>
     <nav class="top-nav">
@@ -40,14 +49,15 @@
     <section class="panel input-panel">
       <h2>입력</h2>
       <div class="field">
+        <label for="templateSearch">템플릿 검색</label>
+        <input id="templateSearch" type="text" placeholder="예: 동아리, 신고, 신청서, 요청서" />
+        <p class="hint">검색 결과 <span id="templateCount">0</span>개</p>
+      </div>
+
+      <div class="field">
         <label for="templateType">문서 종류</label>
-        <select id="templateType">
-          <option value="intro">자기소개</option>
-          <option value="reason">사유서</option>
-          <option value="reflection">반성문</option>
-          <option value="absence">결석 사유서</option>
-          <option value="club">동아리 지원서</option>
-        </select>
+        <select id="templateType"></select>
+        <div id="templateList" class="template-list"></div>
       </div>
 
       <div class="grid-2">
@@ -250,7 +260,7 @@
 
   <footer class="site-footer">
     <div>
-      <strong>문서 템플릿 생성기</strong>
+      <strong>서류킹</strong>
       <p>정확하고 성실한 문서 작성 문화를 지향합니다.</p>
     </div>
     <div class="footer-links">
