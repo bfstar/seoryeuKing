@@ -25,8 +25,24 @@ const suggestionsBox = $("suggestions");
 const submitStatus = $("submitStatus");
 const templateList = $("templateList");
 const templateCount = $("templateCount");
+const autosaveStatus = $("autosaveStatus");
+const draftBanner = $("draftBanner");
+const restoreDraftBtn = $("restoreDraft");
+const dismissDraftBtn = $("dismissDraft");
+const clearDraftBtn = $("clearDraft");
+const charCount = $("charCount");
+const lineCount = $("lineCount");
+const recentTemplatesList = $("recentTemplates");
+const toggleTipsBtn = $("toggleTips");
+const toggleGuidesBtn = $("toggleGuides");
+const scrollTopBtn = $("scrollTop");
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgokjrnr";
+const DRAFT_KEY = "seoryukingDraft.v1";
+const DRAFT_TIME_KEY = "seoryukingDraftTime.v1";
+const RECENT_KEY = "seoryukingRecent.v1";
+const RECENT_MAX = 5;
+let draftTimer = null;
 
 const sentenceBank = {
   intro: [
@@ -182,6 +198,94 @@ const formatDateForFilename = (value) => {
 };
 
 const getValue = (field) => field.value.trim();
+
+const formatTime = (date) => {
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+};
+
+const updateAutosaveStatus = (message) => {
+  if (autosaveStatus) autosaveStatus.textContent = message;
+};
+
+const loadRecent = () => {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    return [];
+  }
+};
+
+const saveRecent = (id) => {
+  if (!id) return;
+  const list = loadRecent().filter((item) => item.id !== id);
+  list.unshift({ id, ts: Date.now() });
+  const trimmed = list.slice(0, RECENT_MAX);
+  localStorage.setItem(RECENT_KEY, JSON.stringify(trimmed));
+  renderRecentList();
+};
+
+const renderRecentList = () => {
+  if (!recentTemplatesList) return;
+  const list = loadRecent();
+  if (!list.length) {
+    recentTemplatesList.innerHTML = "<li>최근 템플릿 없음</li>";
+    return;
+  }
+  recentTemplatesList.innerHTML = "";
+  list.forEach((item) => {
+    const li = document.createElement("li");
+    const name = templateTitles[item.id] || item.id;
+    const time = new Date(item.ts);
+    li.innerHTML = `${name} <span>${formatTime(time)}</span>`;
+    li.addEventListener("click", () => {
+      fields.templateType.value = item.id;
+      renderSuggestions();
+      renderResult();
+      saveRecent(item.id);
+    });
+    recentTemplatesList.appendChild(li);
+  });
+};
+
+const collectDraft = () => {
+  const payload = {};
+  Object.entries(fields).forEach(([key, field]) => {
+    payload[key] = field.value;
+  });
+  return payload;
+};
+
+const saveDraft = () => {
+  if (draftTimer) clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft()));
+      localStorage.setItem(DRAFT_TIME_KEY, new Date().toISOString());
+      updateAutosaveStatus(`자동 저장됨 · ${formatTime(new Date())}`);
+    } catch (err) {
+      updateAutosaveStatus("자동 저장 실패");
+    }
+  }, 400);
+};
+
+const loadDraft = () => {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (err) {
+    return null;
+  }
+};
+
+const clearDraft = () => {
+  localStorage.removeItem(DRAFT_KEY);
+  localStorage.removeItem(DRAFT_TIME_KEY);
+  updateAutosaveStatus("임시저장 삭제됨");
+};
 
 const buildIntro = () => {
   const name = getValue(fields.name) || "홍길동";
@@ -401,12 +505,27 @@ const filterTemplates = () => {
 const renderResult = () => {
   if (!hasAnyInput()) {
     result.innerHTML = '<p class="placeholder">입력 후 문장 생성을 눌러주세요.</p>';
+    updateStats();
     return;
   }
   const type = fields.templateType.value;
   const builder = builders[type] || (() => buildGeneric(type));
   const content = builder();
   result.textContent = content;
+  updateStats();
+};
+
+const updateStats = () => {
+  if (result.querySelector(".placeholder")) {
+    charCount.textContent = "글자수 0";
+    lineCount.textContent = "줄수 0";
+    return;
+  }
+  const text = result.textContent.trim();
+  const chars = text.length;
+  const lines = text ? text.split(/\n/).length : 0;
+  charCount.textContent = `글자수 ${chars}`;
+  lineCount.textContent = `줄수 ${lines}`;
 };
 
 const resetAll = () => {
@@ -420,6 +539,8 @@ const resetAll = () => {
   initDates();
   renderSuggestions();
   result.innerHTML = '<p class="placeholder">입력 후 문장 생성을 눌러주세요.</p>';
+  updateStats();
+  saveDraft();
 };
 
 const copyResult = async () => {
@@ -499,6 +620,56 @@ const initDates = () => {
   fields.date.value = toInput(today);
 };
 
+const fillSample = () => {
+  fields.templateType.value = "reason";
+  fields.name.value = "김서연";
+  fields.date.value = new Date().toISOString().slice(0, 10);
+  fields.recipient.value = "학생부 담당자";
+  fields.title.value = "지각 사유서";
+  fields.background.value = "00고 2학년 3반";
+  fields.event.value = "등교 지각";
+  fields.reason.value = "지하철 운행 지연으로 인해 등교 시간이 늦어졌습니다.";
+  fields.details.value = "이후에는 출발 시간을 10분 앞당기고, 대체 교통 수단을 확인하겠습니다.";
+  fields.plan.value = "출발 전 교통 상황을 확인해 지각을 방지하겠습니다.";
+  fields.strengths.value = "성실함, 일정 관리";
+  fields.experience.value = "학급 서기 활동";
+  fields.goal.value = "책임감 있는 생활 습관 유지";
+  fields.contact.value = "010-1234-5678";
+  renderSuggestions();
+  renderResult();
+  saveDraft();
+};
+
+const showDraftBanner = () => {
+  if (!draftBanner) return;
+  draftBanner.hidden = false;
+};
+
+const hideDraftBanner = () => {
+  if (!draftBanner) return;
+  draftBanner.hidden = true;
+};
+
+const toggleSection = (sectionId, btn, label) => {
+  const section = document.getElementById(sectionId);
+  if (!section || !btn) return;
+  const isHidden = section.hidden;
+  section.hidden = !isHidden;
+  btn.textContent = isHidden ? `${label} 숨기기` : `${label} 보이기`;
+};
+
+const initAds = () => {
+  const ads = document.querySelectorAll(".adsbygoogle");
+  if (!ads.length) return;
+  ads.forEach(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+      // ignore ad push errors
+    }
+  });
+};
+
 fields.templateType.addEventListener("change", () => {
   renderSuggestions();
   renderResult();
@@ -524,6 +695,31 @@ $("copyResult").addEventListener("click", copyResult);
 $("downloadTxt").addEventListener("click", downloadTxt);
 $("downloadPdf").addEventListener("click", downloadPdf);
 $("submitForm").addEventListener("click", submitForm);
+$("fillSample").addEventListener("click", fillSample);
+toggleTipsBtn?.addEventListener("click", () => toggleSection("tipsSection", toggleTipsBtn, "작성 팁"));
+toggleGuidesBtn?.addEventListener("click", () => toggleSection("guidesSection", toggleGuidesBtn, "가이드"));
+scrollTopBtn?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+restoreDraftBtn?.addEventListener("click", () => {
+  const draft = loadDraft();
+  if (!draft) return;
+  Object.entries(draft).forEach(([key, value]) => {
+    if (fields[key] !== undefined) {
+      fields[key].value = value || "";
+    }
+  });
+  renderSuggestions();
+  renderResult();
+  hideDraftBanner();
+  updateAutosaveStatus("임시저장 복원됨");
+});
+
+dismissDraftBtn?.addEventListener("click", hideDraftBanner);
+
+clearDraftBtn?.addEventListener("click", () => {
+  clearDraft();
+  hideDraftBanner();
+});
 
 initDates();
 renderTemplateOptions(templateCatalog);
@@ -531,8 +727,24 @@ renderTemplateList(templateCatalog);
 fields.templateType.value = templateCatalog[0].id;
 renderSuggestions();
 renderResult();
+updateStats();
+renderRecentList();
+window.addEventListener("load", initAds);
+
+const existingDraft = loadDraft();
+if (existingDraft && Object.values(existingDraft).some((value) => String(value || "").trim())) {
+  showDraftBanner();
+  updateAutosaveStatus("임시저장 있음");
+}
 
 Object.values(fields).forEach((field) => {
   const eventName = field.tagName === "SELECT" ? "change" : "input";
-  field.addEventListener(eventName, renderResult);
+  field.addEventListener(eventName, () => {
+    renderResult();
+    saveDraft();
+  });
+});
+
+fields.templateType.addEventListener("change", () => {
+  saveRecent(fields.templateType.value);
 });

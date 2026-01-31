@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1554484358596797"
+     crossorigin="anonymous"></script>
   <title>서류킹</title>
   <meta name="description" content="서류킹에서 100+ 문서 템플릿을 빠르게 검색하고, 가이드를 참고해 정확한 문서를 완성하세요." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,12 +44,25 @@
       <button id="resetAll" class="ghost">전체 초기화</button>
       <button id="copyResult" class="primary">결과 복사</button>
       <button id="submitForm" class="secondary">폼 제출</button>
+      <button id="fillSample" class="ghost">예시 채우기</button>
     </div>
   </header>
 
   <main class="layout">
     <section class="panel input-panel">
       <h2>입력</h2>
+      <p class="autosave" id="autosaveStatus">자동 저장 준비 중</p>
+      <div id="draftBanner" class="draft-banner" hidden>
+        <div>
+          <strong>임시저장된 내용이 있어요.</strong>
+          <p>이전 작성 내용을 바로 복원할 수 있습니다.</p>
+        </div>
+        <div class="banner-actions">
+          <button id="restoreDraft" class="primary">복원</button>
+          <button id="dismissDraft" class="ghost">나중에</button>
+          <button id="clearDraft" class="ghost">삭제</button>
+        </div>
+      </div>
       <div class="field">
         <label for="templateSearch">템플릿 검색</label>
         <input id="templateSearch" type="text" placeholder="예: 동아리, 신고, 신청서, 요청서" />
@@ -157,14 +172,40 @@
           <button id="downloadPdf" class="ghost">PDF 저장</button>
         </div>
       </div>
+      <div class="output-stats">
+        <span id="charCount">글자수 0</span>
+        <span id="lineCount">줄수 0</span>
+      </div>
       <div class="paper" id="result">
         <p class="placeholder">입력 후 문장 생성을 눌러주세요.</p>
       </div>
       <p id="submitStatus" class="status"></p>
     </section>
+
+    <aside class="panel side-panel">
+      <div class="side-card ad-card">
+        <p class="side-label">SPONSORED</p>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1554484358596797"
+             data-ad-slot="6997138559"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+      <div class="side-card">
+        <h3>최근 사용 템플릿</h3>
+        <ul id="recentTemplates" class="side-list"></ul>
+      </div>
+      <div class="side-card">
+        <h3>빠른 설정</h3>
+        <button id="toggleTips" class="ghost">작성 팁 숨기기</button>
+        <button id="toggleGuides" class="ghost">가이드 숨기기</button>
+        <button id="scrollTop" class="ghost">상단으로</button>
+      </div>
+    </aside>
   </main>
 
-  <section class="content-section">
+  <section class="content-section" id="tipsSection">
     <div class="section-header">
       <h2>왜 이 템플릿인가요?</h2>
       <p>문서의 핵심은 짧고 명료한 구조입니다. 필요한 정보만 정리하고, 읽는 사람이 빠르게 이해하도록 돕습니다.</p>
@@ -185,7 +226,7 @@
     </div>
   </section>
 
-  <section class="content-section alt">
+  <section class="content-section alt" id="guidesSection">
     <div class="section-header">
       <h2>빠른 사용 방법</h2>
       <p>필수 입력을 채우고 문장 생성을 누르면 초안이 완성됩니다.</p>
